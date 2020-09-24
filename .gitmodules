@@ -1,0 +1,3 @@
+[submodule "IPMsg"]
+	path = IPMsg
+	url = https://github.com/shirouzu/ipmsg.git
