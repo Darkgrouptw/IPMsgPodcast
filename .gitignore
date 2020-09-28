@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+Tools/ipexc.png
+Tools/ipmsg.chm
+Tools/iptoast.dll
+Tools/uninst.exe
+Setting.json
+Tools/ipmsg.png
