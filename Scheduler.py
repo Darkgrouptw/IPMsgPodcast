@@ -8,17 +8,23 @@ import pandas as pd
 # 相關設定
 IPCMDLocation                                                       = "./Tools/ipcmd.exe"
 IPMsgLocation                                                       = "./Tools/IPMsg.exe"
-PodcastMessage                                                      = "請大家在18:30分前填完進度\n\nby　Duke廣播器(v2)"                          # 時間到了結束這個廣播
-PodcastMessageUrgent                                                = "快填啦!!\n\nby　Duke廣播器(v2)"        # 時間到了結束這個廣播
-# PodcastTiming                                                       = ["17:30", "17:40", "17:50", "18:00", "18:10", "18:20", "18:29"]           # 廣播時間
-# SettingLocation                                                     = "./Setting.json"                     # 放資料的地方 (由於安全性的考量，所以請自行填寫)
-# ExcelLocation                                                       = "Q:/@RD/"                                 # Excel 位置
+PodcastMessages                                                     = ["=====　更新成V2了　=====",
+                                                                        "請在18:30分前填完進度",
+                                                                        "看到這則訊息代表你還沒填(已不會吵以填過的人)",
+                                                                        "",
+                                                                        "by　Duke廣播器(v2)"]                 # 時間到了結束這個廣播
+PodcastMessageUrgent                                                = ["再不填今天進度就幫你填在睡覺!!　(╯°□°）╯︵┴─────┴",
+                                                                        "",
+                                                                        "by　Duke廣播器(v2)"]                 # 時間到了結束這個廣播
+PodcastTiming                                                       = ["17:30",  "18:00", "18:29"]           # 廣播時間
+# SettingLocation                                                     = "./Setting.json"                      # 放資料的地方 (由於安全性的考量，所以請自行填寫)
+# ExcelLocation                                                       = ""                                    # Excel 位置
 
 
 # Test 相關
 ExcelLocation                                                       = "./Excels/Example.xlsx"               # Execl 位置
 SettingLocation                                                     = "./SettingTest.json"                  # 放資料的地方 (由於安全性的考量，所以請自行填寫)
-PodcastTiming                                                       = [":00", ":10", ":30"]                 # 廣播時間
+PodcastTiming                                                       = [":00", ":10", ":20", ":30", ":40", ":50"]    # 廣播時間
 
 ####################################################################
 # Helper Function
@@ -39,16 +45,23 @@ def SplitResult(info):
     PCName  = data[-1][:-1]
     IP      = data[-2]
     return PCName, IP
+# 找出所有在 UserData 裡面，這個 NickName 是否已填過
 def FindDataInExcelList(UserData, nickname):
     for user in UserData:
         if user["Name"] == nickname:
             return user["IsFilled"]
     return False
+# 將一個 Array 的填成一段話發送
+def TransferToSentence(StringArray):
+    TotalMsg = ""
+    for msg in StringArray:
+        TotalMsg += msg + "\n"
+    return TotalMsg
 
 ####################################################################
 # 廣播
 ####################################################################
-def DoPodcastJob():
+def DoPodcastJob(IsLast = False):
     # 每隔一段時間會重複
     Now = datetime.now()
     print(Now.strftime("%Y-%m-%d %H:%M:%S.%f")[0: -3] + " => Send all messages")
@@ -74,10 +87,20 @@ def DoPodcastJob():
 
                 # 如果還沒填進度，所以就要開始教你填進度
                 if not IsFilled:
-                    # print(pcname + " " + ip)
-                    process = subprocess.Popen([IPMsgLocation, "/MSG", ip, PodcastMessage], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    _, _ = process.communicate()
-                    # print(stdout, stderr)
+                    print("Send => " + pcname + " " + ip)
+
+                    # 如果是最後一個填，要吵死他
+                    if not IsLast:
+                        process = subprocess.Popen([IPMsgLocation, "/MSG", ip, TransferToSentence(PodcastMessages)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        _, _ = process.communicate()
+                    else:
+                        # 好像有一個限制不能重複傳好多筆
+                        # 所以要 sleep 一秒
+                        for _ in range(10):
+                            process = subprocess.Popen([IPMsgLocation, "/MSG", ip, TransferToSentence(PodcastMessageUrgent)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            _, _ = process.communicate()
+                            time.sleep(1)
+                            # print(stdout, stderr)
 
 ####################################################################
 # 檢查 Excel 有哪些人沒有填
@@ -131,8 +154,12 @@ def ReadTodayExcel():
 # Main
 UserData = ReadSettingJSON()
 for podcasttime in PodcastTiming:
-    # schedule.every().day.at(podcasttime).do(DoPodcastJob)
-    schedule.every().minute.at(podcasttime).do(DoPodcastJob)
+    if podcasttime == PodcastTiming[len(PodcastTiming) - 1]:
+        # schedule.every().day.at(podcasttime).do(DoPodcastJob, True)
+        schedule.every().minute.at(podcasttime).do(DoPodcastJob, True)
+    else:
+        # schedule.every().day.at(podcasttime).do(DoPodcastJob)
+        schedule.every().minute.at(podcasttime).do(DoPodcastJob)
 print("Start Podcast!!")
 while True:
     schedule.run_pending()
