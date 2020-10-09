@@ -6,11 +6,13 @@
 
 ### Introduction
 <img src="https://github.com/Darkgrouptw/IPMsgPodcast/blob/master/Images/NormalMode.gif?raw=true" width="75%"></img>
+
 In my company, we need to fill the working report on excel every day.
 According to my company environment, we can only use IP Messenger to send the messenge to others. 
 So I write a little tool to remind co-workers to fill out the report.
 
 <img src="https://github.com/Darkgrouptw/IPMsgPodcast/blob/master/Images/UrgentMode.gif?raw=true" width="75%"></img>
+
 If u don't fill the working report. It will change the mode to urgent mode that send the messange every second. (I tested to send the messange less than one second, but it didn't show the popup.)
 
 ### Workflow
