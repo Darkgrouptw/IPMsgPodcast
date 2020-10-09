@@ -6,12 +6,14 @@
 
 ### Introduction
 <img src="https://github.com/Darkgrouptw/IPMsgPodcast/blob/master/Images/NormalMode.gif?raw=true" width="75%"></img>
+
 由於主要是用 IPMsg 來公司內部的訊息
 然後是用 Excel 來做進度填寫
 所以這邊會去偵測 Excel 來判斷是否填寫訊息
 來寄送提醒訊息
 
 <img src="https://github.com/Darkgrouptw/IPMsgPodcast/blob/master/Images/UrgentMode.gif?raw=true" width="75%"></img>
+
 如果到了每日最後一個提醒還不填寫進度的時候
 會開始一直送訊息給對方說要填寫進度
 (目前是過最短能接受到且顯示訊息的間隔式 1秒 以上)
