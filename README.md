@@ -1,5 +1,5 @@
 # PodcastIPMsg
-[中文版(Switch to Chinese Version)](#https://github.com/Darkgrouptw/IPMsgPodcast/blob/master/README_CHT.md)
+[中文版(Chinese Version)](#https://github.com/Darkgrouptw/IPMsgPodcast/blob/master/README_CHT.md)
 ## Outline
 1. [Introduction](#Introduction)
 2. [Workflow](#Workflow)
