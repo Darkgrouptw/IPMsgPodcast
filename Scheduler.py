@@ -4,6 +4,7 @@ import time
 import subprocess
 import json
 import pandas as pd
+import os
 
 # 相關設定
 IPCMDLocation                                                       = "./Tools/ipcmd.exe"
@@ -72,7 +73,10 @@ def DoPodcastJob(IsLast = False):
         return
 
     # 抓 Excel 的資訊
-    ExcelUserDataList = ReadTodayExcel()
+    ExcelUserDataList, IsAvailable = ReadTodayExcel()
+    if not IsAvailable:                                 # 如果檔案不存在，就傳這個出去
+        print(Now.strftime("%Y-%m-%d %H:%M:%S.%f")[0: -3] + " => Maybe Today don't need to fill report")
+        return
 
     # 抓取所有人的 IP Info
     # 去判斷哪些要送
@@ -110,6 +114,10 @@ def ReadTodayExcel():
     # 路徑名稱
     # Now = datetime.now()
     # ExcelLocation = ExcelLocation + Now.strftime("%Y-%m/%Y-%m-%d") + "/DEV20_workreport.xlsx"
+
+    # 先確定檔案在不在
+    if os.path.isfile(ExcelLocation):
+        return null, False
 
     # 讀取 Excel 路徑
     xl = pd.ExcelFile(ExcelLocation)
@@ -149,7 +157,7 @@ def ReadTodayExcel():
             else:
                 CurrentUserData["IsFilled"] = True
             ExcelUserDataList.append(CurrentUserData)
-    return ExcelUserDataList
+    return ExcelUserDataList, True
 
 # Main
 UserData = ReadSettingJSON()
